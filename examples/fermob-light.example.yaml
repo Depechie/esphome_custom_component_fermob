@@ -1,0 +1,65 @@
+substitutions:
+  name: fermob-bridge
+  friendly_name: Fermob Bridge
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: "y"
+
+logger:
+
+api:
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none
+  # Uncomment if your ESP32 struggles with a roaming/mesh Wi-Fi network.
+  # fast_connect: true
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [fermob]
+
+esp32_ble:
+  max_connections: 4
+
+esp32_ble_tracker:
+
+bluetooth_proxy:
+  active: true
+
+fermob:
+  id: fermob_hub
+  # Optional but recommended: pin your light's BLE address once you know it.
+  # If omitted, the component connects to the first supported Fermob light it sees.
+  # address: AA:BB:CC:DD:EE:FF
+  pairing_mode: share
+
+light:
+  - platform: fermob
+    id: fermob_light
+    name: Fermob Light
+    fermob_id: fermob_hub
+
+button:
+  - platform: fermob
+    name: Pair Fermob Light
+    fermob_id: fermob_hub
+    type: pair
+  - platform: fermob
+    name: Forget Fermob Keys
+    fermob_id: fermob_hub
+    type: forget
