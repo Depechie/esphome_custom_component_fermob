@@ -49,9 +49,29 @@ ESP32-S3 running this external component
 Fermob light
 ```
 
-This is not a Home Assistant custom integration and it does not send arbitrary
-GATT writes through the stock ESPHome Bluetooth Proxy API. The Fermob connection
-is owned by the ESPHome component running on the ESP32.
+This is an ESPHome external component: the ESP32 owns the Fermob BLE connection
+and runs the pairing and light protocol locally. The stock ESPHome light
+integration does not provide a generic action for sending arbitrary GATT writes
+from Home Assistant. An **active** ESPHome Bluetooth proxy can, however, relay a
+BLE connection for a *custom* Home Assistant integration that implements the
+Fermob protocol in Home Assistant.
+
+## Alternative: Home Assistant integration
+
+Consider [ha-fermob](https://github.com/slettmayer/ha-fermob) if your main goal
+is to control Fermob lamps from Home Assistant without maintaining custom
+ESPHome firmware. It implements pairing and the protocol in Home Assistant and
+can use a local Bluetooth adapter or an **active** ESPHome Bluetooth proxy near
+the lamp. Its documented MOOON! support includes colour temperature, battery
+and charging information, in addition to on/off and brightness; this component
+currently exposes on/off and brightness as a light entity.
+
+The two approaches use the same lamp's BLE connection and pairing ownership;
+they cannot control it concurrently. If you move a lamp paired to this ESPHome
+component to ha-fermob, stop the ESPHome Fermob component and factory-reset the
+lamp before pairing it in Home Assistant. The `Forget Fermob Keys` button only
+erases keys on the ESP32; it does **not** unpair the lamp. You can keep using the
+ESP32 as an active proxy after removing the Fermob component from its firmware.
 
 ## Hardware
 
